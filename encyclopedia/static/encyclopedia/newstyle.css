@@ -1,0 +1,17 @@
+
+.image-wiki {
+ 
+    /* border: 1px solid black; */
+    padding: 10px;
+    /* margin: 4px; */
+    width: 50%;
+    height: 250px;
+}
+
+.image-wiki > img {
+    /* border: 5px dotted rosybrown; */
+    padding: 5px;
+    /* margin: 5px; */
+    padding-top: 30px;
+    padding-bottom: 10px;
+}
