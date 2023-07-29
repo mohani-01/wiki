@@ -7,5 +7,8 @@
 
 {% block body %}
 {{ body|safe }}
-<button>Edit page</button>
+<form action="/edit/{{title}}" method="post">
+    {% csrf_token %}
+    <button>Edit Page</button>
+</form>
 {% endblock %}

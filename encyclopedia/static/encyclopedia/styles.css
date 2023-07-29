@@ -17,7 +17,7 @@ h1 {
 }
 
 textarea {
-    height: 90vh;
+    height: 50vh;
     width: 80%;
 }
 
@@ -25,17 +25,20 @@ textarea {
     padding: 10px;
 }
 
-.image-wiki {
-    border: 3px solid black;
-    width: 100%;
-    padding: 10px;
-    /* margin: 4px; */
-}
 
-.image-wiki > img {
-    /* border: 5px dotted rosybrown; */
-    padding:20px 0px 40px 0px;
+
+.wiki-img {
+    width: min-content;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 30px 0px;
+    background-color: rgb(158, 158, 94);
 }
+     
+
+
+
+
 .search {
     width: 100%;
     font-size: 15px;
