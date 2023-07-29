@@ -4,10 +4,9 @@
     {{ title }} - Wiki
 {% endblock %}
 
-
 {% block body %}
 {{ body|safe }}
-<form action="/edit/{{title}}" method="post">
+<form action="/edit/{{title}}" method="get">
     {% csrf_token %}
     <button>Edit Page</button>
 </form>

@@ -93,6 +93,10 @@ def randomm(request):
 
 def edit(request, file):
     if request.method == "POST":
+        return HttpResponse("Done!")
+
+
+    else:
         topic = CreateNewWiki(initial={'title': file, 'content': util.get_entry(file)})
 
             # editForm = editPage(initial={'title': name, 'textContent': util.get_entry(name)})
@@ -100,6 +104,7 @@ def edit(request, file):
     # topic = util.get_entry(file)
     # editfile = CreateNewWiki(topic)
         return render(request, 'encyclopedia/edit.html', {
+            "title": file,
             "edit": topic,
         })
     return HttpResponse("Hello, World")
