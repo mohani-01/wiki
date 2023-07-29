@@ -1,21 +1,18 @@
-from django import forms
-from django.http import HttpResponse
+
+from django.http import HttpResponse, HttpResponseRedirect
+
 
 from django.shortcuts import render
+from django.urls import reverse
 
 from markdown2 import Markdown
 from . import util
-import random
+from .forms import CreateNewWiki
+from random import randrange
 
+
+# Used to change markdown to html
 markit = Markdown()
-class CreateNewWiki(forms.Form):
-    title = forms.CharField(label="Title", max_length=100, 
-                    widget=forms.TextInput(attrs={'placeholder': 'Search'}))
-    # content = forms.Textarea(label="Content", attrs={'type': 'markdwo'}) 
-    content = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Content in markdown format \
-                                                           ## Django \
-                                                           # Django is python FrameWork for backend development. '}))
-    
 
 
 def index(request):
@@ -24,67 +21,102 @@ def index(request):
         })
 
 
-def find(request, name):
-    title = util.get_entry(name)
-    if title:
+def page(request, name):
+    # Get the content if exist
+    content = util.get_entry(name)
+
+    if content:
+        # Return the page and convert markdown to html
         return render(request, "encyclopedia/title.html", {
             "title": name.capitalize(),
-            "body": markit.convert(title)
+            "body": markit.convert(content)
         })
+
     else:
         return render(request, "encyclopedia/error.html")
 
 
 def search(request):
-    if request.method == "POST":
-        title = request.POST.getlist("q")[0]
-        topic = util.get_entry(title)
 
-        if topic:
+    if request.method == "POST":
+        # Get the value of user search 
+        title = request.POST.getlist("q")[0]
+
+
+        # Get the content if exist
+        content = util.get_entry(title)
+
+        if content:
             return render(request, "encyclopedia/title.html", {
                 "title": title.capitalize(),
-                "body": markit.convert(topic),
+                "body": markit.convert(content),
             })
+
+        # if the content doesn't exist  
         else:
             # Get all the entries
             all_pages = util.list_entries()
             # Similar pages
             similar_pages = []
+
             # search if there is similarity b/n them 
             for page in util.list_entries():
+
+                # Check if the substring is in the pages
                 if title.lower() in page.lower():
                     similar_pages.append(page)
+
             # display all of them
             return render(request, 'encyclopedia/search.html', {
                 "search": similar_pages,
             })
+    # via GET ( for safety)
     else:
         return index(request)
 
 def add(request):
+    # via POST
     if request.method == "POST":
+
+        # Get all the information the user insert
         form = CreateNewWiki(request.POST)
 
+        # Check if the form is valid
         if form.is_valid():
+            # GET the title and check if the same title exist
             title = form.cleaned_data["title"]
             if util.get_entry(title):
-                return HttpResponse("There is another title by this name.")
+                # Return error message
+                return HttpResponse("<h1>There is another title by this name.</h1>")
+            
+            # Else get the content 
             content = form.cleaned_data["content"]
-        print(content)
-        # util.save_entry(title, content)
-        return HttpResponse("Working on it")
-    
-    else:
-        form = CreateNewWiki()
 
+            # add it to the database
+            util.save_entry(title, content)
+            
+            # Return the user into entry page
+            return HttpResponseRedirect(reverse('wiki:index '))
+
+    # via GEt
+    else:
+       # return empty form to the user
         return render(request, 'encyclopedia/addpage.html', {
-            "form": form,
+            "form": CreateNewWiki(),
         })
 
-def randomm(request):
+
+def random(request):
+    # GET all the topics
     topics = util.list_entries()
-    l = random.randrange(0, len(topics))
+
+    # random number
+    l = randrange(0, len(topics))
+    
+    # get the title randomly
     title = util.get_entry(topics[l])
+
+    # return that page
     return render(request, 'encyclopedia/title.html', {
         "title":  topics[l],
         "body": markit.convert(title)
@@ -93,18 +125,36 @@ def randomm(request):
 
 def edit(request, file):
     if request.method == "POST":
-        return HttpResponse("Done!")
 
+        # Get the update data
+        update = CreateNewWiki(request.POST)
+        
+        # Clean the data and update it to the database
+        if update.is_valid():
+            content = update.cleaned_data['content']
+            util.save_entry(file, content)
+            
+            # return them to new entry page
+            return HttpResponseRedirect(reverse('wiki:index'))
 
+        # if the data is not valid return to the user edited data
+        else:
+            return render(request,'encyclopedia/edit.html', {
+                "title":file,
+                "edit": update,
+            })
+
+    # via Get
     else:
+        
+        # Get the topic and populate it with existing data: file= title of the page, util.get_entry(file) is text w/ markdown font-type
         topic = CreateNewWiki(initial={'title': file, 'content': util.get_entry(file)})
-
-            # editForm = editPage(initial={'title': name, 'textContent': util.get_entry(name)})
-
-    # topic = util.get_entry(file)
-    # editfile = CreateNewWiki(topic)
+        # Make the title page readonly so the user can't edit
+        # Its a distruction, so that even if this attribute is change it has no meaning untill the form action is unchange
+        topic.fields['title'].widget.attrs['readonly'] = True
+      
+        # The return the data to the user
         return render(request, 'encyclopedia/edit.html', {
             "title": file,
             "edit": topic,
         })
-    return HttpResponse("Hello, World")

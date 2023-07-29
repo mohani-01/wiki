@@ -1,8 +1,5 @@
 body {
-    background-color: black;
-}
-body {
-    margin: 0;
+    margin: 0px 15px;
     background-color: white;
 }
 
@@ -10,10 +7,19 @@ code {
     white-space: pre;
 }
 
+.img-fluid {
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
 
 h1 {
     margin-top: 0px;
     padding-top: 20px;
+}
+
+label {
+    font-weight: 500;
+    font-size: 18px;
 }
 
 textarea {
@@ -24,19 +30,6 @@ textarea {
 .main {
     padding: 10px;
 }
-
-
-
-.wiki-img {
-    width: min-content;
-    margin-right: auto;
-    margin-left: auto;
-    padding: 30px 0px;
-    background-color: rgb(158, 158, 94);
-}
-     
-
-
 
 
 .search {
