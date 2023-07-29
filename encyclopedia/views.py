@@ -96,7 +96,7 @@ def add(request):
             util.save_entry(title, content)
             
             # Return the user into entry page
-            return HttpResponseRedirect(reverse('wiki:index '))
+            return HttpResponseRedirect(reverse('wiki:index'))
 
     # via GEt
     else:
