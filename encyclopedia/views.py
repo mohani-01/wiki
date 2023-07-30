@@ -94,13 +94,13 @@ def add(request):
             title = form.cleaned_data["title"]
             if util.get_entry(title):
                 # Return error message
-                return HttpResponse("<h1>There is another title by this name.</h1>")
+                return HttpResponse("<h1>There is another title by this name. Change Your title name!</h1>")
             
             # Else get the content 
             content = markdown2.markdown(form.cleaned_data["content"])
 
             # add it to the database
-            util.save_entry(title, markdownify.markdownify(content,heading_style="ATX"))
+            util.save_entry(title.capitalize(), markdownify.markdownify(content,heading_style="ATX"))
             
             # Return the user into entry page
             return HttpResponseRedirect(reverse('wiki:index'))

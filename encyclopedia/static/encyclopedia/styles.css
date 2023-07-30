@@ -35,7 +35,13 @@ textarea {
 .search {
     width: 100%;
     font-size: 15px;
-    line-height: 15px;
+    line-height: 25px;
+    outline: none;
+    border: 2px solid rgb(67, 67, 67);
+    border-radius: 5px;
+}
+.search:hover {
+    border-color: rgb(107, 105, 128);
 }
 
 .sidebar {
