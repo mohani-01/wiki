@@ -5,14 +5,18 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from markdown2 import Markdown
+import markdown2 
+import markdownify
+
+
+# from markdown2 import Markdown
 from . import util
 from .forms import CreateNewWiki
 from random import randrange
 
 
 # Used to change markdown to html
-markit = Markdown()
+
 
 
 def index(request):
@@ -29,7 +33,7 @@ def page(request, name):
         # Return the page and convert markdown to html
         return render(request, "encyclopedia/title.html", {
             "title": name.capitalize(),
-            "body": markit.convert(content)
+            "body": markdown2.markdown(content)
         })
 
     else:
@@ -42,6 +46,9 @@ def search(request):
         # Get the value of user search 
         title = request.POST.getlist("q")[0]
 
+        # Return index page if user search for nothing
+        if not title:
+            return index(request)
 
         # Get the content if exist
         content = util.get_entry(title)
@@ -49,7 +56,7 @@ def search(request):
         if content:
             return render(request, "encyclopedia/title.html", {
                 "title": title.capitalize(),
-                "body": markit.convert(content),
+                "body": markdown2.markdown(content),
             })
 
         # if the content doesn't exist  
@@ -90,10 +97,10 @@ def add(request):
                 return HttpResponse("<h1>There is another title by this name.</h1>")
             
             # Else get the content 
-            content = form.cleaned_data["content"]
+            content = markdown2.markdown(form.cleaned_data["content"])
 
             # add it to the database
-            util.save_entry(title, content)
+            util.save_entry(title, markdownify.markdownify(content,heading_style="ATX"))
             
             # Return the user into entry page
             return HttpResponseRedirect(reverse('wiki:index'))
@@ -119,7 +126,7 @@ def random(request):
     # return that page
     return render(request, 'encyclopedia/title.html', {
         "title":  topics[l],
-        "body": markit.convert(title)
+        "body": markdown2.markdown(title)
     })
 
 
@@ -131,8 +138,8 @@ def edit(request, file):
         
         # Clean the data and update it to the database
         if update.is_valid():
-            content = update.cleaned_data['content']
-            util.save_entry(file, content)
+            content = markdown2.markdown(update.cleaned_data['content'])
+            util.save_entry(file, markdownify.markdownify(content, heading_style="ATX"))
             
             # return them to new entry page
             return HttpResponseRedirect(reverse('wiki:index'))
