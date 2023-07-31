@@ -1,4 +1,3 @@
-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -96,7 +95,6 @@ def add(request):
                     "error": "There is another title by this name. Change Your title!",
                     "form": form,
                 })
-                # return HttpResponse("<h1>There is another title by this name. Change Your title!</h1>")
             
             # Else get the content 
             content = markdown2.markdown(form.cleaned_data["content"])
@@ -108,7 +106,7 @@ def add(request):
             # Return the user into entry page
             # return HttpResponseRedirect(reverse('wiki:index'))
 
-    # via GEt
+    # via GET
     else:
        # return empty form to the user
         return render(request, 'encyclopedia/addpage.html', {
@@ -146,7 +144,7 @@ def edit(request, file):
             
             # return them to new entry page
             return page(request,file)
-            # return HttpResponseRedirect(reverse('wiki:index'))
+
 
         # if the data is not valid return to the user edited data
         else:
@@ -161,7 +159,7 @@ def edit(request, file):
         # Get the topic and populate it with existing data: file= title of the page, util.get_entry(file) is text w/ markdown font-type
         topic = CreateNewWiki(initial={'title': file, 'content': util.get_entry(file)})
         # Make the title page readonly so the user can't edit
-        # Its a distruction, so that even if this attribute is change it has no meaning untill the form action is unchange
+        # Its a distruction, so that even if this attribute is change it has no effect until the form action is unchange
         topic.fields['title'].widget.attrs['readonly'] = True
       
         # The return the data to the user
