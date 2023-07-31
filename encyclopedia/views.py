@@ -102,9 +102,9 @@ def add(request):
             # add it to the database
             util.save_entry(title.capitalize(), markdownify.markdownify(content,heading_style="ATX"))
             
-            return page(request, title)
             # Return the user into entry page
-            # return HttpResponseRedirect(reverse('wiki:index'))
+            return page(request, title)
+            
 
     # via GET
     else:
@@ -143,7 +143,7 @@ def edit(request, file):
             util.save_entry(file, markdownify.markdownify(content, heading_style="ATX"))
             
             # return them to new entry page
-            return page(request,file)
+            return page(request, file)
 
 
         # if the data is not valid return to the user edited data
