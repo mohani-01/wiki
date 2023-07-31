@@ -1,10 +1,20 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
-
+Add Newpage
 {% endblock %}
 
+
+
 {% block body %}
+{% if error %}
+  <div class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+{% else %}
+
+{% endif %}
+
 
 <form action="{% url 'wiki:add'%}" method="post">
     <div class="form-group">

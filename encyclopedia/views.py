@@ -1,18 +1,16 @@
 
 from django.http import HttpResponse, HttpResponseRedirect
-
-
 from django.shortcuts import render
 from django.urls import reverse
 
+from random import randrange
 import markdown2 
 import markdownify
 
 
-# from markdown2 import Markdown
 from . import util
 from .forms import CreateNewWiki
-from random import randrange
+
 
 
 # Used to change markdown to html
@@ -94,7 +92,11 @@ def add(request):
             title = form.cleaned_data["title"]
             if util.get_entry(title):
                 # Return error message
-                return HttpResponse("<h1>There is another title by this name. Change Your title name!</h1>")
+                return render(request, 'encyclopedia/addpage.html', {
+                    "error": "There is another title by this name. Change Your title!",
+                    "form": form,
+                })
+                # return HttpResponse("<h1>There is another title by this name. Change Your title!</h1>")
             
             # Else get the content 
             content = markdown2.markdown(form.cleaned_data["content"])
@@ -102,8 +104,9 @@ def add(request):
             # add it to the database
             util.save_entry(title.capitalize(), markdownify.markdownify(content,heading_style="ATX"))
             
+            return page(request, title)
             # Return the user into entry page
-            return HttpResponseRedirect(reverse('wiki:index'))
+            # return HttpResponseRedirect(reverse('wiki:index'))
 
     # via GEt
     else:
@@ -142,7 +145,8 @@ def edit(request, file):
             util.save_entry(file, markdownify.markdownify(content, heading_style="ATX"))
             
             # return them to new entry page
-            return HttpResponseRedirect(reverse('wiki:index'))
+            return page(request,file)
+            # return HttpResponseRedirect(reverse('wiki:index'))
 
         # if the data is not valid return to the user edited data
         else:

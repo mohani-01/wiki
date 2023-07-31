@@ -11,6 +11,5 @@ Java is one of high level programming language with a huge resource and used for
 * Big Data Technologies.
 * Distributed Applications.
 * Cloud-based Applications.
-* To structure a web page and its content.
 
 
