@@ -11,11 +11,6 @@ from . import util
 from .forms import CreateNewWiki
 
 
-
-# Used to change markdown to html
-
-
-
 def index(request):
         return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
@@ -104,7 +99,13 @@ def add(request):
             
             # Return the user into entry page
             return page(request, title)
-            
+        
+        else:
+            return render(request, 'encyclopedia/addpage.html', {
+                "error": "Your Page is not submitted, Please fill The form Correctly",
+                "form": form,
+            })
+
 
     # via GET
     else:
